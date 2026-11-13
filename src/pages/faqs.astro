@@ -2,16 +2,20 @@
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import CtaBand from '../components/CtaBand.astro';
+import { Image } from 'astro:assets';
 import { faqs } from '../data/site';
+import { img } from '../lib/images';
 ---
 <Base title="Frequently asked questions" description="Answers to common questions about Lockforce: why choose us, what we offer, document security, security risk management and occupational health and safety.">
   <PageHero
     title="Frequently asked questions"
     lead="Straight answers about who we are, what we offer and how we work."
+    image={img('training-workshop.jpg')}
+    alt="A Lockforce workshop in session, with delegates seated in a conference room"
   />
 
   <section class="section theme-paper">
-    <div class="wrap">
+    <div class="wrap faq-layout">
       <div class="faq">
         {faqs.map((f, i) => (
           <div class="faq__item">
@@ -33,6 +37,12 @@ import { faqs } from '../data/site';
           </div>
         ))}
       </div>
+      <aside class="faq-aside">
+        <div class="frame" data-clip>
+          <Image src={img('first-aid.jpg')} alt="A first aid training exercise with a practice mannequin" widths={[480, 800]} sizes="(min-width: 960px) 32vw, 100vw" />
+        </div>
+        <p>Can’t find your answer here? Ask us directly and the right person will come back to you.</p>
+      </aside>
     </div>
   </section>
 

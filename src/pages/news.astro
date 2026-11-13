@@ -13,6 +13,8 @@ const fmtDate = (iso: string) =>
   <PageHero
     title="News and updates"
     lead="Analysis and updates on crisis preparedness, business continuity, emergency management and our operations."
+    image={img('news-banner.jpg')}
+    alt="Hands holding a folded newspaper"
   />
 
   <section class="section theme-paper">
@@ -20,7 +22,7 @@ const fmtDate = (iso: string) =>
       <ul class="news-grid news-grid--list">
         {news.map((n, i) => (
           <li data-reveal>
-            <a class="news-card" href={n.href}>
+            <a class="news-card" href={n.href} data-cursor-label="Read">
               <div class="news-card__media">
                 <Image
                   src={img(n.image)}

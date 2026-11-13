@@ -5,6 +5,7 @@ import 'lenis/dist/lenis.css';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Reticle from '../components/Reticle.astro';
 import { site } from '../data/site';
 
 interface Props { title?: string; description?: string }
@@ -27,9 +28,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:type" content="website" />
     <meta name="theme-color" content="#151515" />
     <link rel="icon" type="image/svg+xml" href={link('/favicon.svg')} />
-    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      // the lock-on intro plays once per visit
+      try { if (sessionStorage.getItem('lf-seen')) document.documentElement.classList.add('no-loader'); } catch (e) {}
+    </script>
   </head>
   <body>
+    <div class="loader" data-loader aria-hidden="true">
+      <div class="loader__mark"><Reticle /></div>
+      <span class="loader__line"></span>
+    </div>
     <a class="skip" href="#main">Skip to content</a>
     <Header />
     <main id="main">
@@ -41,6 +50,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         <circle cx="30" cy="30" r="13"></circle>
         <path d="M30 2v11M30 47v11M2 30h11M47 30h11"></path>
       </svg>
+      <span class="cursor__label" data-cursor-text></span>
     </div>
     <script>
       import '../scripts/main.ts';

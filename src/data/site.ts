@@ -84,6 +84,21 @@ export const practices = [
   },
 ];
 
+// Sectors named on the profile and services pages.
+export const sectors = [
+  { name: 'Mining', image: 'security-site.jpg', body: 'Guarding, risk assessments and issue motivated group management on resource projects.' },
+  { name: 'Oil and gas', image: 'sector-oil-gas.jpg', body: 'Security experience across LNG and coal seam gas projects.' },
+  { name: 'Construction', image: 'sector-construction.jpg', body: 'Security design before the build, and a licensed guard force during it.' },
+  { name: 'Shipping', image: 'sector-shipping.jpg', body: 'Maritime and supply chain security services.' },
+  { name: 'Transport', image: 'sector-transport.jpg', body: 'Supply chain security and driver competency training.' },
+  { name: 'Defence, Police and Government', image: 'crib.jpg', body: 'Training support equipment for realistic rehearsal.' },
+];
+
+export const capabilities = [
+  'Security risk assessments', 'Crisis management', 'Hostile environment training', 'ISO audits',
+  'Deployable live-fire ranges', 'Executive protection', 'TSCM sweeps', 'Driver training', 'Business continuity',
+];
+
 export const whyLockforce = [
   { title: 'ISO 9001 certified', body: 'Certified to the ISO 9001 Quality Management System.', key: true },
   { title: 'ISO 27001 aligned', body: 'Complies with the requirements of the ISO 27001 Information Security Management System.', key: true },
@@ -116,11 +131,13 @@ export const securityTerms = [
   },
 ];
 
-export type Service = { id: string; name: string; paras: string[]; listIntro?: string; list?: string[] };
+export type Service = { id: string; name: string; image?: string; alt?: string; paras: string[]; listIntro?: string; list?: string[] };
 
 export const securityServices: Service[] = [
   {
     id: 'risk-assessments',
+    image: 'svc-risk.jpg',
+    alt: 'An industrial processing plant lit up at night',
     name: 'Security risk assessments',
     paras: [
       'Lockforce provides a full security risk assessment service to clients concerned that a compromise to their organisation’s operation may be financially crippling.',
@@ -129,6 +146,8 @@ export const securityServices: Service[] = [
   },
   {
     id: 'guarding',
+    image: 'svc-guarding.jpg',
+    alt: 'A Lockforce guard force in hard hats and high-visibility vests lined up for briefing',
     name: 'Security guarding services',
     paras: [
       'Lockforce can provide security guards to assist the client as required. Our guard force personnel are licensed and appropriately qualified, bringing the experience needed to safeguard the client’s people, property and project equipment.',
@@ -137,6 +156,8 @@ export const securityServices: Service[] = [
   },
   {
     id: 'img-management',
+    image: 'svc-img.jpg',
+    alt: 'Silhouettes of a crowd carrying placards',
     name: 'Issue motivated group management',
     paras: [
       'Our specialised strategic services extend beyond conventional rigid security arrangements. Lockforce gained comprehensive experience over four years of managing the actions of Issue Motivated Groups (IMGs) domestically, resulting in an intimate understanding of the intent, capabilities and resources activists employ to disrupt major LNG/CSG and resource projects. Our level of expertise is unique and continues to deliver measurable success.',
@@ -150,6 +171,8 @@ export const securityServices: Service[] = [
   },
   {
     id: 'crisis-management',
+    image: 'svc-crisis.jpg',
+    alt: 'A flooded street with a road closed sign',
     name: 'Crisis management',
     paras: [
       'Lockforce provides a fast, effective and efficient reaction to a crisis or emergency management event through accurate analysis of the situation combined with a coordinated, planned response. The ultimate aim is to avoid a crisis or emergency; by engaging Lockforce early, the risk to your business is minimised.',
@@ -158,6 +181,8 @@ export const securityServices: Service[] = [
   },
   {
     id: 'tscm',
+    image: 'svc-tscm.jpg',
+    alt: 'A dome surveillance camera above a busy concourse',
     name: 'Technical surveillance counter measures',
     paras: [
       'Lockforce provides specialist Technical Surveillance Counter Measure (TSCM) sweeps, commonly referred to as bug sweeps, and associated services to clients who operate in a competitive and challenging business environment and need peace of mind that confidential meetings, plans and strategy workshops remain confidential.',
@@ -165,6 +190,8 @@ export const securityServices: Service[] = [
   },
   {
     id: 'land-based',
+    image: 'svc-land.jpg',
+    alt: 'Razor wire and a security camera on a perimeter fence',
     name: 'Land based security',
     paras: [
       'Lockforce is very familiar with the complex and challenging environments clients are faced with at times. Through detailed assessment of a client’s requirements, we offer workable solutions based on our expertise and experience within industry.',
@@ -187,6 +214,8 @@ export const securityServices: Service[] = [
   },
   {
     id: 'security-design',
+    image: 'svc-design.jpg',
+    alt: 'A design team reviewing building plans on a screen',
     name: 'Security design',
     paras: [
       'Lockforce can provide qualified and experienced personnel to become an integral team member during the design phase, prior to construction, to ensure all security and access control aspects have been considered. Our proven methodology saves the costs associated with securing your real estate development and provides an accurate platform to protect your investment.',
@@ -194,6 +223,8 @@ export const securityServices: Service[] = [
   },
   {
     id: 'executive-protection',
+    image: 'svc-executive.jpg',
+    alt: 'A close protection officer in a dark suit',
     name: 'Executive protection services',
     paras: [
       'Lockforce specialises in top-tier executive protection for high-value individuals. Our discreet and highly effective close protection solutions are designed to mitigate risk while delivering security and peace of mind. Backed by a team of expertly trained professionals, we ensure your safety in every situation, so you can focus on what truly matters.',
@@ -217,6 +248,8 @@ export const workshops = [
 export const trainingServices: Service[] = [
   {
     id: 'heat',
+    image: 'svc-heat.jpg',
+    alt: 'A Lockforce instructor presenting a hostile environment scenario to a class',
     name: 'Hostile Environment Awareness Training (HEAT)',
     paras: [
       'An intensive one to four-day program that helps participants safeguard their personal safety and security in unpredictable and life-threatening situations and locations.',
@@ -228,6 +261,8 @@ export const trainingServices: Service[] = [
   },
   {
     id: 'driver-training',
+    image: 'svc-driver.jpg',
+    alt: 'A car rounding a marker cone on a driver training course',
     name: 'Driver training',
     paras: [
       'Lockforce provides a number of driving packages covering not only security-oriented driving but a wide range of corporate defensive driving skills. These courses are specific to client needs, not the off-the-shelf courses generally supplied by other training providers.',
@@ -237,6 +272,8 @@ export const trainingServices: Service[] = [
   },
   {
     id: 'fire-training',
+    image: 'svc-fire.jpg',
+    alt: 'A firefighter working in front of a blaze',
     name: 'Online fire training (AS 3745-2010)',
     paras: [
       'Lockforce’s online fire training has been produced in line with Australian Standard 3745-2010, Planning for Emergencies in Facilities.',
@@ -244,6 +281,8 @@ export const trainingServices: Service[] = [
   },
   {
     id: 'auditing-courses',
+    image: 'compliance-audit.jpg',
+    alt: 'Hands working through a checklist on a laptop',
     name: 'Online auditing courses',
     paras: [
       'Lockforce provides online auditing courses that help professionals and organisations show commitment and competence, with valuable training from the comfort of home. Lockforce partners with PECB to provide these courses.',

@@ -2,10 +2,11 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import { Flip } from 'gsap/Flip';
+import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import Lenis from 'lenis';
 import type { GlobeSite, GlobeState } from './globe';
 
-gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
+gsap.registerPlugin(ScrollTrigger, SplitText, Flip, ScrambleTextPlugin);
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -83,9 +84,13 @@ function initCursor() {
     if (!shown) { gsap.set(cursor, { x: e.clientX, y: e.clientY }); gsap.to(cursor, { opacity: 1, duration: 0.3 }); shown = true; }
     xTo(e.clientX); yTo(e.clientY);
   }, { passive: true });
+  const labelEl = $('[data-cursor-text]', cursor);
   document.addEventListener('pointerover', (e) => {
     const t = e.target as Element;
-    cursor.classList.toggle('is-lock', !!t.closest?.('a, button, summary, label, select'));
+    const labelled = t.closest?.<HTMLElement>('[data-cursor-label]');
+    if (labelled && labelEl) labelEl.textContent = labelled.dataset.cursorLabel ?? '';
+    cursor.classList.toggle('has-label', !!labelled);
+    cursor.classList.toggle('is-lock', !labelled && !!t.closest?.('a, button, summary, label, select'));
     const typing = !!t.closest?.('input, textarea');
     gsap.to(cursor, { opacity: typing ? 0 : 1, duration: 0.2, overwrite: 'auto' });
   });
@@ -132,7 +137,27 @@ function splitLines(el: HTMLElement, vars: gsap.TweenVars) {
   });
 }
 
-function initIntro() {
+/** The once-per-visit lock-on intro. Returns how long the page intro should wait for it. */
+function playLoader(): number {
+  const loader = $('[data-loader]');
+  const root = document.documentElement;
+  if (!loader || reduce || root.classList.contains('no-loader')) { loader?.remove(); return 0; }
+  try { sessionStorage.setItem('lf-seen', '1'); } catch { /* private mode */ }
+  // The mark assembles in CSS from first paint; here we only hold long enough for
+  // it to finish, then lift the curtain.
+  // time left on the mark's own CSS animation (it started at first paint)
+  let hold = 1.1;
+  const anim = $('.loader__line', loader)?.getAnimations?.()[0];
+  const end = anim?.effect?.getComputedTiming().endTime;
+  if (anim && typeof end === 'number' && typeof anim.currentTime === 'number') hold = Math.max(0, (end - anim.currentTime) / 1000) + 0.1;
+  setTimeout(() => {
+    loader.classList.add('is-done');
+    setTimeout(() => { root.classList.add('no-loader'); loader.remove(); }, 850);
+  }, hold * 1000);
+  return hold + 0.3;
+}
+
+function initIntro(wait = 0) {
   const claimed = new Set<HTMLElement>();
 
   // home hero, or the hero of an inner page
@@ -145,14 +170,21 @@ function initIntro() {
   if (reduce) {
     gsap.set([title, ...fades, media], { visibility: 'visible' });
   } else {
-    if (title) splitLines(title, { delay: 0.15 });
-    if (fades.length) gsap.fromTo(fades, { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.1, delay: 0.55 });
+    if (title) splitLines(title, { delay: wait + 0.15 });
+    if (fades.length) gsap.fromTo(fades, { autoAlpha: 0, y: 22 }, { autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.1, delay: wait + 0.55 });
     if (media) {
+      // the photograph is wiped in behind a red scan line, then drifts as the page scrolls
+      const image = $('img', media);
+      const scan = $('.page-hero__scan', media);
       gsap.set(media, { visibility: 'visible' });
-      gsap.fromTo(media, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'expo.out', delay: 0.35 });
-      gsap.from($('img', media), { scale: 1.25, duration: 1.8, ease: 'expo.out', delay: 0.35 });
+      gsap.fromTo(media, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.4, ease: 'power3.inOut', delay: wait + 0.1 });
+      if (scan) gsap.fromTo(scan, { top: '0%', opacity: 1 }, { top: '100%', opacity: 0, duration: 1.4, ease: 'power3.inOut', delay: wait + 0.1 });
+      if (image) {
+        gsap.from(image, { scale: 1.2, duration: 2.2, ease: 'expo.out', delay: wait + 0.1 });
+        gsap.to(image, { yPercent: 9, ease: 'none', scrollTrigger: { trigger: media.parentElement, start: 'top top', end: 'bottom top', scrub: true } });
+      }
     }
-    if (heroRule) ruleTimeline(heroRule).delay(0.7);
+    if (heroRule) ruleTimeline(heroRule).delay(wait + 0.7);
   }
   return claimed;
 }
@@ -430,7 +462,7 @@ function initForm() {
 
 /* ------------------------------------------------------------------ globe */
 
-function initHeroGlobe() {
+function initHeroGlobe(wait = 0) {
   const root = $('[data-globe]');
   if (!root) return;
   const sites: GlobeSite[] = JSON.parse(root.dataset.sites!);
@@ -458,11 +490,16 @@ function initHeroGlobe() {
       role.textContent = site.role;
       coordsEl.textContent = fmt(site.lat, site.lon);
       setPicked(s.index);
-      if (!reduce) gsap.fromTo([name, role, coordsEl], { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.45, stagger: 0.06, ease: 'power3.out', overwrite: true });
+      if (!reduce) {
+        gsap.fromTo([role, coordsEl], { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.45, stagger: 0.06, ease: 'power3.out', overwrite: true });
+        // the site name resolves out of noise, like a readout settling
+        gsap.to(name, { duration: 0.8, scrambleText: { text: site.name, chars: 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789', speed: 0.5 }, overwrite: true });
+      }
     } else {
       hud.classList.add('is-seeking');
       hud.classList.remove('is-locked');
       status.textContent = s.target === null ? 'Free look' : 'Seeking';
+      gsap.killTweensOf(name);
       name.textContent = s.target === null ? 'Release near a site to lock on' : sites[s.target].name;
       role.textContent = '';
       coordsEl.textContent = fmt(s.lat, s.lon);
@@ -470,7 +507,8 @@ function initHeroGlobe() {
     }
   };
 
-  import('./globe')
+  // WebGL start-up is heavy, so it waits until the intro curtain has lifted
+  const load = () => import('./globe')
     .then(({ initGlobe }) => {
       const globe = initGlobe(root, {
         sites,
@@ -486,16 +524,164 @@ function initHeroGlobe() {
       root.classList.add('is-static');
       hud.classList.add('is-locked');
     });
+  setTimeout(load, wait * 1000);
+}
+
+/* ---------------------------------------------------------- image framing */
+
+/** Adds targeting brackets to photographs; they close in as each image arrives. */
+function initFrames() {
+  const frames = $$('.frame, .news-card__media, .product__media, .range-card__media, .split__media, .service__media');
+  frames.forEach((el) => {
+    const b = document.createElement('span');
+    b.className = 'brackets';
+    b.setAttribute('aria-hidden', 'true');
+    b.innerHTML = '<i></i><i></i><i></i><i></i>';
+    el.appendChild(b);
+  });
+  if (reduce) { frames.forEach((el) => el.classList.add('is-framed')); return; }
+  ScrollTrigger.batch(frames, {
+    start: 'top 82%',
+    once: true,
+    onEnter: (els) => els.forEach((el, i) => setTimeout(() => el.classList.add('is-framed'), 350 + i * 110)),
+  });
+}
+
+/** Photographs lean a few degrees toward the pointer. */
+function initTilt() {
+  if (!finePointer || reduce) return;
+  $$('.news-card__media, .product__media, .range-card__media, .collage .frame, .why__photo, .faq-aside .frame').forEach((el) => {
+    gsap.set(el, { transformPerspective: 900 });
+    const rx = gsap.quickTo(el, 'rotationX', { duration: 0.6, ease: 'power3' });
+    const ry = gsap.quickTo(el, 'rotationY', { duration: 0.6, ease: 'power3' });
+    const host = el.closest('a') ?? el;
+    host.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      ry(((e as PointerEvent).clientX - r.left - r.width / 2) / r.width * 9);
+      rx(-((e as PointerEvent).clientY - r.top - r.height / 2) / r.height * 7);
+    });
+    host.addEventListener('pointerleave', () => { rx(0); ry(0); });
+  });
+}
+
+/** Button labels roll over on hover. */
+function initRollButtons() {
+  $$('.btn > span:first-child').forEach((span) => {
+    const text = span.textContent ?? '';
+    span.classList.add('roll');
+    span.textContent = '';
+    const a = document.createElement('span');
+    a.textContent = text;
+    const b = a.cloneNode(true) as HTMLElement;
+    b.setAttribute('aria-hidden', 'true');
+    span.append(a, b);
+  });
+}
+
+/* ------------------------------------------------------- home page extras */
+
+function initCounters() {
+  $$('[data-count]').forEach((el) => {
+    const end = Number(el.dataset.count);
+    if (reduce || !Number.isFinite(end)) return;
+    const state = { v: 0 };
+    el.textContent = '0';
+    gsap.to(state, {
+      v: end, duration: 1.6, ease: 'power3.out', snap: { v: 1 },
+      onUpdate: () => { el.textContent = String(Math.round(state.v)); },
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+    });
+  });
+}
+
+/** The capability ticker drifts on its own and surges with scroll speed and direction. */
+function initMarquee() {
+  $$('[data-marquee]').forEach((root) => {
+    const track = $('.marquee__track', root);
+    if (!track || reduce) return;
+    const tween = gsap.to(track, { xPercent: -50, duration: 46, ease: 'none', repeat: -1 });
+    let dir = 1;
+    ScrollTrigger.create({
+      trigger: root, start: 'top bottom', end: 'bottom top',
+      onToggle: (self) => (self.isActive ? tween.play() : tween.pause()),
+      onUpdate: (self) => {
+        const v = self.getVelocity();
+        if (Math.abs(v) > 20) dir = v > 0 ? 1 : -1;
+        const boost = gsap.utils.clamp(0, 7, Math.abs(v) / 260);
+        gsap.to(tween, { timeScale: dir * (1 + boost), duration: 0.25, overwrite: true });
+        gsap.to(tween, { timeScale: dir, duration: 1.1, delay: 0.25, overwrite: false });
+      },
+    });
+  });
+}
+
+/** Collage photographs travel at different speeds. */
+function initCollage() {
+  if (reduce) return;
+  $$('[data-collage] [data-speed]').forEach((el) => {
+    const speed = Number(el.dataset.speed);
+    gsap.fromTo(el, { yPercent: -speed }, { yPercent: speed, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 0.5 } });
+  });
+}
+
+/** Sector panels: the one under the pointer (or focused, or tapped) opens. */
+function initSectors() {
+  $$('[data-sectors]').forEach((root) => {
+    const panels = $$('.sector', root);
+    const open = (panel: HTMLElement) => panels.forEach((p) => {
+      const on = p === panel;
+      p.classList.toggle('is-active', on);
+      $('button', p)?.setAttribute('aria-expanded', String(on));
+    });
+    panels.forEach((panel) => {
+      const btn = $('button', panel)!;
+      if (finePointer) panel.addEventListener('pointerenter', () => open(panel));
+      btn.addEventListener('focus', () => open(panel));
+      btn.addEventListener('click', () => { open(panel); setTimeout(() => ScrollTrigger.refresh(), 800); });
+    });
+  });
+}
+
+/** Reticles whose red dot keeps an eye on the pointer. */
+function initEyes() {
+  if (!finePointer || reduce) return;
+  const eyes = $$('[data-eye]').map((host) => ({ host, svg: $<SVGElement>('.reticle', host), dot: $<SVGElement>('.reticle__dot', host) }))
+    .filter((e) => e.svg && e.dot);
+  if (!eyes.length) return;
+  window.addEventListener('pointermove', (e) => {
+    for (const eye of eyes) {
+      const r = eye.svg!.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) continue;
+      const dx = e.clientX - (r.left + r.width / 2);
+      const dy = e.clientY - (r.top + r.height / 2);
+      const d = Math.hypot(dx, dy) || 1;
+      const reach = Math.min(1, d / 300) * 11; // viewBox units, stays inside the ring
+      // undo any rotation on the mark so the dot still moves toward the pointer on screen
+      const a = (-Number(gsap.getProperty(eye.svg!, 'rotation')) * Math.PI) / 180;
+      const ux = (dx / d) * Math.cos(a) - (dy / d) * Math.sin(a);
+      const uy = (dx / d) * Math.sin(a) + (dy / d) * Math.cos(a);
+      eye.dot!.style.transform = `translate(${ux * reach}px, ${uy * reach}px)`;
+    }
+  }, { passive: true });
 }
 
 /* ------------------------------------------------------------------- boot */
 
 function boot() {
+  const wait = playLoader();
   initScroll();
   initHeader();
   initCursor();
+  initRollButtons();
   initMagnetic();
-  const claimed = initIntro();
+  const claimed = initIntro(wait);
+  initFrames();
+  initTilt();
+  initCounters();
+  initMarquee();
+  initCollage();
+  initSectors();
+  initEyes();
   initReveals(claimed);
   initLockIns();
   initScrubText();
@@ -506,7 +692,7 @@ function boot() {
   initFaq();
   initFilter();
   initForm();
-  initHeroGlobe();
+  initHeroGlobe(wait);
   ScrollTrigger.refresh();
 }
 

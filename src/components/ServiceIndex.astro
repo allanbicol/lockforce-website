@@ -1,6 +1,8 @@
 ---
 // Long-form services with a sticky index that tracks the reader's position.
+import { Image } from 'astro:assets';
 import type { Service } from '../data/site';
+import { img } from '../lib/images';
 interface Props { title: string; intro?: string; services: Service[] }
 const { title, intro, services } = Astro.props;
 ---
@@ -20,13 +22,20 @@ const { title, intro, services } = Astro.props;
       </nav>
       <div class="services__body">
         {services.map((s) => (
-          <article class="service" id={s.id} data-spy-target>
-            <h3 class="h3">{s.name}</h3>
-            <div class="prose">
-              {s.paras.map((p) => <p>{p}</p>)}
-              {s.listIntro && <p>{s.listIntro}</p>}
-              {s.list && <ul class="ticks">{s.list.map((li) => <li>{li}</li>)}</ul>}
+          <article class:list={['service', { 'service--media': s.image }]} id={s.id} data-spy-target>
+            <div class="service__copy">
+              <h3 class="h3">{s.name}</h3>
+              <div class="prose">
+                {s.paras.map((p) => <p>{p}</p>)}
+                {s.listIntro && <p>{s.listIntro}</p>}
+                {s.list && <ul class="ticks">{s.list.map((li) => <li>{li}</li>)}</ul>}
+              </div>
             </div>
+            {s.image && (
+              <div class="service__media" data-clip>
+                <Image src={img(s.image)} alt={s.alt ?? ''} widths={[400, 720]} sizes="(min-width: 960px) 24vw, 100vw" />
+              </div>
+            )}
           </article>
         ))}
       </div>

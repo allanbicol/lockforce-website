@@ -5,7 +5,7 @@ import Arrow from './Arrow.astro';
 interface Props { title: string; body?: string; label?: string }
 const { title, body, label = 'Contact us' } = Astro.props;
 ---
-<section class="cta" data-cta>
+<section class="cta" data-cta data-eye>
   <Reticle class="cta__mark" />
   <div class="wrap cta__inner">
     <h2 class="h1" data-split>{title}</h2>

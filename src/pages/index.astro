@@ -6,11 +6,18 @@ import Reticle from '../components/Reticle.astro';
 import Rule from '../components/Rule.astro';
 import Arrow from '../components/Arrow.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { site, globeSites, practices, products, whyLockforce, news } from '../data/site';
+import { site, globeSites, practices, products, whyLockforce, news, sectors, capabilities } from '../data/site';
 import { img } from '../lib/images';
 
 const featured = products.filter((p) => p.featured);
 const latest = news.slice(0, 3);
+const years = new Date().getFullYear() - 2006;
+const stats = [
+  { value: years, label: 'years operating, since 2006' },
+  { value: 2, label: 'offices, in Queensland and Manila' },
+  { value: practices.length, label: 'practices under one accountable team' },
+  { value: products.length, label: 'training support products' },
+];
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
 const coords = (lat: number, lon: number) =>
@@ -19,9 +26,10 @@ const coords = (lat: number, lon: number) =>
 <Base>
   <!-- Hero: the globe turns until each Lockforce site sits under the reticle -->
   <section class="hero theme-dark" data-hero>
-    <div class="hero__globe" data-globe data-sites={JSON.stringify(globeSites)}>
+    <div class="hero__globe" data-globe data-cursor-label="Drag" data-sites={JSON.stringify(globeSites)}>
       <canvas aria-hidden="true"></canvas>
       <div class="hud" aria-hidden="true">
+        <span class="hud__sweep"></span>
         <svg class="hud__dial" viewBox="0 0 400 400">
           <circle cx="200" cy="200" r="197" pathLength="360"></circle>
         </svg>
@@ -70,7 +78,7 @@ const coords = (lat: number, lon: number) =>
   </section>
 
   <!-- Statement -->
-  <section class="section section--tall theme-paper statement">
+  <section class="section section--tall theme-paper statement grid-bg">
     <div class="wrap statement__grid">
       <p class="statement__text" data-scrub-text>
         We deliver security solutions, compliance support and training services that help businesses and
@@ -89,6 +97,27 @@ const coords = (lat: number, lon: number) =>
         <a class="link" href={link('/profile/')}><span>About Lockforce</span><Arrow /></a>
       </div>
     </div>
+
+    <div class="wrap collage" data-collage>
+      <figure class="collage__item collage__item--a" data-speed="-7">
+        <div class="frame" data-clip>
+          <Image src={img('instructor.jpg')} alt="A Lockforce instructor demonstrating a technique to a trainee" widths={[480, 900]} sizes="(min-width: 900px) 38vw, 100vw" />
+        </div>
+        <figcaption>Instructor-led, hands-on training</figcaption>
+      </figure>
+      <figure class="collage__item collage__item--b" data-speed="9">
+        <div class="frame" data-clip>
+          <Image src={img('guards-aerial.jpg')} alt="A licensed guard force in formation, seen from above" widths={[480, 800]} sizes="(min-width: 900px) 30vw, 50vw" />
+        </div>
+        <figcaption>A licensed guard force on site</figcaption>
+      </figure>
+      <figure class="collage__item collage__item--c" data-speed="-13">
+        <div class="frame" data-clip>
+          <Image src={img('village.jpg')} alt="A modular training environment built from non-ballistic wall panels" widths={[400, 700]} sizes="(min-width: 900px) 24vw, 50vw" />
+        </div>
+        <figcaption>Training support equipment in use</figcaption>
+      </figure>
+    </div>
   </section>
 
   <!-- Practices -->
@@ -101,7 +130,7 @@ const coords = (lat: number, lon: number) =>
       <ul class="practices__list" data-practices>
         {practices.map((p, i) => (
           <li>
-            <a class="practice" href={link(p.href)} data-practice={i}>
+            <a class="practice" href={link(p.href)} data-practice={i} data-cursor-label="Open">
               <span class="practice__fill" aria-hidden="true"></span>
               <span class="practice__name">{p.name}</span>
               <span class="practice__text">
@@ -141,7 +170,7 @@ const coords = (lat: number, lon: number) =>
         <ul class="range__track" data-hscroll-track>
           {featured.map((p) => (
             <li class="range-card">
-              <a href={link(`/products/#${p.id}`)}>
+              <a href={link(`/products/#${p.id}`)} data-cursor-label="View">
                 <div class="range-card__media">
                   <Image src={img(p.image)} alt={p.name} widths={[480, 800]} sizes="(min-width: 900px) 34vw, 80vw" />
                 </div>
@@ -172,7 +201,26 @@ const coords = (lat: number, lon: number) =>
   </section>
 
   <!-- Why Lockforce -->
-  <section class="section theme-concrete why">
+  <section class="section theme-concrete why grid-bg">
+    <div class="marquee" data-marquee aria-hidden="true">
+      <div class="marquee__track">
+        {[0, 1].map(() => capabilities.map((c, i) => (
+          <span class:list={['marquee__item', { 'marquee__item--solid': i % 2 === 0 }]}>{c}<Reticle /></span>
+        )))}
+      </div>
+    </div>
+
+    <div class="wrap">
+      <ul class="stats" data-reveal-group>
+        {stats.map((st) => (
+          <li>
+            <strong data-count={st.value}>{st.value}</strong>
+            <span>{st.label}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
     <div class="wrap why__grid">
       <div class="why__intro">
         <h2 class="h2" data-split>Why choose Lockforce</h2>
@@ -181,6 +229,9 @@ const coords = (lat: number, lon: number) =>
           construction, shipping and transport.
         </p>
         <a class="btn btn--outline" href={link('/profile/')}><span>More about us</span><Arrow /></a>
+        <div class="why__photo frame" data-clip>
+          <Image src={img('team.jpg')} alt="The Lockforce team gathered in the Manila office" widths={[480, 800, 980]} sizes="(min-width: 960px) 36vw, 100vw" />
+        </div>
       </div>
       <ul class="why__list" data-lock-list>
         {whyLockforce.map((w) => (
@@ -190,6 +241,30 @@ const coords = (lat: number, lon: number) =>
               <h3>{w.title}</h3>
               <p>{w.body}</p>
             </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Sectors: panels open as you move across them -->
+  <section class="section theme-dark sectors">
+    <div class="wrap">
+      <div class="section__head section__head--split">
+        <h2 class="h2" data-split>Sectors we work in</h2>
+        <p class="lead">
+          Lockforce provides services to mining, oil and gas, construction, shipping and transportation
+          companies, nationally and internationally.
+        </p>
+      </div>
+      <ul class="sectors__panels" data-sectors>
+        {sectors.map((sec, i) => (
+          <li class:list={['sector', { 'is-active': i === 0 }]}>
+            <button type="button" aria-expanded={i === 0 ? 'true' : 'false'}>
+              <Image src={img(sec.image)} alt="" widths={[480, 900]} sizes="(min-width: 960px) 46vw, 100vw" />
+              <span class="sector__name">{sec.name}</span>
+              <span class="sector__body">{sec.body}</span>
+            </button>
           </li>
         ))}
       </ul>
@@ -206,7 +281,7 @@ const coords = (lat: number, lon: number) =>
       <ul class="news-grid" data-reveal-group>
         {latest.map((n) => (
           <li>
-            <a class="news-card" href={n.href}>
+            <a class="news-card" href={n.href} data-cursor-label="Read">
               <div class="news-card__media">
                 <Image src={img(n.image)} alt="" widths={[480, 768]} sizes="(min-width: 900px) 30vw, 100vw" />
               </div>

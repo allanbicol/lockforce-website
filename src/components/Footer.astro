@@ -3,6 +3,7 @@ import { link } from '../lib/url';
 import { Image } from 'astro:assets';
 import { site, nav } from '../data/site';
 import { img } from '../lib/images';
+import Reticle from './Reticle.astro';
 const year = new Date().getFullYear();
 const tel = (phone: string) => `tel:${phone.replace('(0)', '').replace(/[^+\d]/g, '')}`;
 ---
@@ -43,5 +44,9 @@ const tel = (phone: string) => `tel:${phone.replace('(0)', '').replace(/[^+\d]/g
   <div class="wrap footer__base">
     <p>© {site.legalName} {year}. All rights reserved.</p>
     <a class="link-quiet" href={site.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+    <a class="to-top" href="#main" data-eye>
+      <Reticle />
+      <span>Back to top</span>
+    </a>
   </div>
 </footer>

@@ -3,12 +3,15 @@ import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
 import Arrow from '../components/Arrow.astro';
 import { site, practices } from '../data/site';
+import { img } from '../lib/images';
 const tel = (phone: string) => `tel:${phone.replace('(0)', '').replace(/[^+\d]/g, '')}`;
 ---
 <Base title="Contact us" description="Get in touch with Lockforce International. Offices in Landsborough, Queensland and Makati City, Philippines.">
   <PageHero
     title="Get in touch"
     lead="Interested in how Lockforce can support your business? Send an enquiry and our team will help."
+    image={img('contact.jpg')}
+    alt="A Lockforce team member at a laptop"
   />
 
   <section class="section theme-paper">

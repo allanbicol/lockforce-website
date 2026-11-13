@@ -6,17 +6,18 @@ interface Props { title: string; lead: string; image?: ImageMetadata; alt?: stri
 const { title, lead, image, alt = '' } = Astro.props;
 ---
 <section class:list={['page-hero theme-dark', { 'page-hero--media': image }]}>
-  <div class="wrap page-hero__grid">
+  {image && (
+    <div class="page-hero__bg" data-intro-media>
+      <Image src={image} alt={alt} widths={[640, 1024, 1600]} sizes="100vw" loading="eager" />
+      <span class="page-hero__scan" aria-hidden="true"></span>
+    </div>
+  )}
+  <div class="wrap page-hero__inner">
     <div class="page-hero__copy">
       <h1 class="display display--page" data-intro-title>{title}</h1>
       <p class="lead" data-intro-fade>{lead}</p>
-      <slot />
+      {Astro.slots.has('default') && <div class="page-hero__actions" data-intro-fade><slot /></div>}
     </div>
-    {image && (
-      <div class="page-hero__media" data-intro-media>
-        <Image src={image} alt={alt} widths={[480, 800, 1200]} sizes="(min-width: 900px) 42vw, 100vw" loading="eager" />
-      </div>
-    )}
   </div>
   <div class="wrap"><Rule /></div>
 </section>

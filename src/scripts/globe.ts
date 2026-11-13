@@ -103,6 +103,12 @@ export function initGlobe(root: HTMLElement, opts: Options) {
   });
   globe.add(new Points(dotGeo, dotMat));
 
+  // Faint graticule every 30 degrees, so the turn of the globe reads even over open ocean.
+  const gridMat = new LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.075 });
+  const gridLine = (pts: Vector3[]) => globe.add(new Line(new BufferGeometry().setFromPoints(pts), gridMat));
+  for (let lat = -60; lat <= 60; lat += 30) gridLine(Array.from({ length: 121 }, (_, i) => toVec(lat, i * 3 - 180, 1.001)));
+  for (let lon = -180; lon < 180; lon += 30) gridLine(Array.from({ length: 61 }, (_, i) => toVec(i * 3 - 90, lon, 1.001)));
+
   // Site markers and their pulses.
   const red = new Color('#ff1a1a');
   const pulses: { mesh: Mesh; phase: number }[] = [];
