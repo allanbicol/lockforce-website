@@ -1,0 +1,49 @@
+---
+import { link } from '../lib/url';
+import '@fontsource-variable/archivo/wdth.css';
+import 'lenis/dist/lenis.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+interface Props { title?: string; description?: string }
+const { title, description = site.description } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | Security, training and compliance`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {/* Preview deployments must not compete with the live site in search results. */}
+    {Astro.site?.hostname !== 'lockforce.com.au' && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#151515" />
+    <link rel="icon" type="image/svg+xml" href={link('/favicon.svg')} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <div class="cursor" data-cursor aria-hidden="true">
+      <svg viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="13"></circle>
+        <path d="M30 2v11M30 47v11M2 30h11M47 30h11"></path>
+      </svg>
+    </div>
+    <script>
+      import '../scripts/main.ts';
+    </script>
+  </body>
+</html>

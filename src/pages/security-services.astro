@@ -1,0 +1,60 @@
+---
+import { link } from '../lib/url';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ServiceIndex from '../components/ServiceIndex.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Arrow from '../components/Arrow.astro';
+import { securityTerms, securityServices } from '../data/site';
+import { img } from '../lib/images';
+---
+<Base
+  title="Security services and assessments"
+  description="Risk-based security services from Lockforce: security risk assessments, guarding, crisis management, TSCM bug sweeps, security design and executive protection."
+>
+  <PageHero
+    title="Security services and assessments"
+    lead="A comprehensive range of security services, tailored to each client’s requirements and always built on a detailed security risk assessment."
+    image={img('security-site.jpg')}
+    alt="Lockforce personnel in high-visibility clothing overlooking an open-cut mine site"
+  >
+    <a class="btn btn--red" href={link('/contact-us/')}><span>Discuss your security needs</span><Arrow /></a>
+  </PageHero>
+
+  <section class="section section--tall theme-paper">
+    <div class="wrap statement__grid">
+      <p class="statement__text" data-scrub-text>
+        Our security concept is always risk based, starting from a detailed security risk assessment that
+        establishes the baseline to work from.
+      </p>
+      <div class="statement__aside prose" data-reveal>
+        <p>
+          The Lockforce team has the knowledge and experience to adapt to the ever-evolving security
+          challenges of the domestic and international arena, providing our clients with a superior and
+          proven product.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section theme-concrete">
+    <div class="wrap">
+      <div class="section__head">
+        <h2 class="h2" data-split>Important security terminology</h2>
+        <p class="lead">Four terms that come up in every engagement, and what we mean by each.</p>
+      </div>
+      <dl class="terms" data-reveal-group>
+        {securityTerms.map((t) => (
+          <div>
+            <dt>{t.term}</dt>
+            <dd>{t.def}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <ServiceIndex title="Our security services" services={securityServices} />
+
+  <CtaBand title="Protect what matters" body="Get expert security solutions today." />
+</Base>

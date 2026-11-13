@@ -1,0 +1,47 @@
+---
+import { link } from '../lib/url';
+import { Image } from 'astro:assets';
+import { site, nav } from '../data/site';
+import { img } from '../lib/images';
+const year = new Date().getFullYear();
+const tel = (phone: string) => `tel:${phone.replace('(0)', '').replace(/[^+\d]/g, '')}`;
+---
+<footer class="footer theme-dark">
+  <div class="wrap footer__grid">
+    <div class="footer__brand">
+      <a href={link('/')} aria-label="Lockforce International, home">
+        <Image src={img('logo-white.png')} alt="Lockforce" width={440} />
+      </a>
+      <p>{site.tagline}.</p>
+      <div class="footer__cert">
+        <Image src={img('iso-9001-badge.jpg')} alt="SAI Global certified system, Quality ISO 9001, Manila office" width={57} />
+        <span>Certified to ISO 9001<br />Quality Management System</span>
+      </div>
+    </div>
+
+    {site.offices.map((office) => (
+      <address class="footer__office">
+        <h2>{office.name}</h2>
+        <p class="footer__muted">{office.region}</p>
+        <p>{office.lines.map((line) => <>{line}<br /></>)}</p>
+        {office.phones.map((phone) => (
+          <p><a class="link-quiet" href={tel(phone)}>{phone}</a></p>
+        ))}
+        <p><a class="link-quiet" href={`mailto:${site.email}`}>{site.email}</a></p>
+      </address>
+    ))}
+
+    <nav class="footer__links" aria-label="Footer">
+      <h2>Explore</h2>
+      <ul>
+        {nav.map((item) => <li><a class="link-quiet" href={link(item.href)}>{item.label}</a></li>)}
+        <li><a class="link-quiet" href={link('/faqs/')}>FAQs</a></li>
+        <li><a class="link-quiet" href={link('/contact-us/')}>Contact us</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap footer__base">
+    <p>© {site.legalName} {year}. All rights reserved.</p>
+    <a class="link-quiet" href={site.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+</footer>

@@ -1,0 +1,70 @@
+---
+import { link } from '../lib/url';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import ServiceIndex from '../components/ServiceIndex.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Arrow from '../components/Arrow.astro';
+import { workshops, trainingServices } from '../data/site';
+import { img } from '../lib/images';
+---
+<Base
+  title="Training services"
+  description="Tailored training from Lockforce: Hostile Environment Awareness Training (HEAT), driver training, risk workshops, online fire training and ISO auditing courses."
+>
+  <PageHero
+    title="Training services"
+    lead="Professional, flexible training and development that keeps your workforce knowledgeable, compliant and industry-ready."
+    image={img('training-heat.jpg')}
+    alt="Participants taking part in a practical training exercise at a Lockforce facility"
+  >
+    <a class="btn btn--red" href={link('/contact-us/')}><span>Plan a training program</span><Arrow /></a>
+  </PageHero>
+
+  <section class="section theme-paper">
+    <div class="wrap split">
+      <div class="split__copy">
+        <h2 class="h2" data-split>Built around your working environment</h2>
+        <div class="prose">
+          <p>
+            In an ever-changing regulatory and technical environment, our tailored training programs ensure
+            staff maintain current skills and a practical understanding relevant to their roles.
+          </p>
+          <p>
+            All training is customised to the client’s working environment, projects and industry
+            requirements, with flexible schedules that minimise disruption while supporting team
+            development, collaboration and operational excellence.
+          </p>
+        </div>
+      </div>
+      <div class="split__media split__media--wide" data-clip>
+        <Image
+          src={img('training-workshop.jpg')}
+          alt="A Lockforce workshop in session, with delegates seated in a conference room"
+          widths={[480, 800, 1024]}
+          sizes="(min-width: 960px) 46vw, 100vw"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section theme-concrete">
+    <div class="wrap">
+      <div class="section__head">
+        <h2 class="h2" data-split>Training workshops</h2>
+        <p class="lead">
+          Workshops are tailored to the industry and area of operations, and relevant to the culture and
+          working environment, so each one produces a real-time, relevant risk register.
+        </p>
+      </div>
+      <ul class="chips" data-reveal-group>
+        {workshops.map((w) => <li>{w}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <ServiceIndex title="Programs and courses" services={trainingServices} />
+
+  <CtaBand title="Enhance readiness" body="Get tailored training solutions today." />
+</Base>

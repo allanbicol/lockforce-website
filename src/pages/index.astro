@@ -1,0 +1,228 @@
+---
+import { link } from '../lib/url';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Reticle from '../components/Reticle.astro';
+import Rule from '../components/Rule.astro';
+import Arrow from '../components/Arrow.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site, globeSites, practices, products, whyLockforce, news } from '../data/site';
+import { img } from '../lib/images';
+
+const featured = products.filter((p) => p.featured);
+const latest = news.slice(0, 3);
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+const coords = (lat: number, lon: number) =>
+  `${Math.abs(lat).toFixed(2)}° ${lat < 0 ? 'S' : 'N'}, ${Math.abs(lon).toFixed(2)}° ${lon < 0 ? 'W' : 'E'}`;
+---
+<Base>
+  <!-- Hero: the globe turns until each Lockforce site sits under the reticle -->
+  <section class="hero theme-dark" data-hero>
+    <div class="hero__globe" data-globe data-sites={JSON.stringify(globeSites)}>
+      <canvas aria-hidden="true"></canvas>
+      <div class="hud" aria-hidden="true">
+        <svg class="hud__dial" viewBox="0 0 400 400">
+          <circle cx="200" cy="200" r="197" pathLength="360"></circle>
+        </svg>
+        <div class="hud__reticle" data-hud-reticle>
+          <Reticle />
+        </div>
+        <div class="hud__readout" data-hud-readout>
+          <span class="hud__status" data-hud-status>Locked on</span>
+          <strong data-hud-name>{globeSites[0].name}</strong>
+          <span data-hud-role>{globeSites[0].role}</span>
+          <span class="hud__coords" data-hud-coords>{coords(globeSites[0].lat, globeSites[0].lon)}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap hero__copy">
+      <h1 class="display" data-hero-title>{site.tagline}</h1>
+      <p class="lead" data-hero-fade>
+        Security, training, compliance and training support equipment for business, Defence, Police and
+        Government across Australia and Southeast Asia.
+      </p>
+      <div class="hero__actions" data-hero-fade>
+        <a class="btn btn--red" href={link('/contact-us/')}><span>Talk to our team</span><Arrow /></a>
+        <a class="btn btn--ghost" href="#capabilities"><span>See what we do</span><Arrow /></a>
+      </div>
+    </div>
+
+    <div class="wrap hero__foot" data-hero-fade>
+      <Rule at={78} />
+      <div class="hero__sites">
+        <p class="hero__hint">Drag the globe, or pick a site</p>
+        <ul>
+          {globeSites.map((s, i) => (
+            <li>
+              <button type="button" class="site-pick" data-site-pick={i} aria-pressed={i === 0 ? 'true' : 'false'}>
+                <span class="site-pick__dot"></span>
+                <span class="site-pick__name">{s.name}</span>
+                <span class="site-pick__role">{s.role}</span>
+                <span class="site-pick__bar"></span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statement -->
+  <section class="section section--tall theme-paper statement">
+    <div class="wrap statement__grid">
+      <p class="statement__text" data-scrub-text>
+        We deliver security solutions, compliance support and training services that help businesses and
+        government agencies stay safe and resilient in a rapidly changing world.
+      </p>
+      <div class="statement__aside prose" data-reveal>
+        <p>
+          Our team provides comprehensive risk management strategies and specialised products to reduce risks,
+          ensure compliance and strengthen workplace security.
+        </p>
+        <p>
+          For Defence, Police and Government organisations, we supply advanced Training Support Equipment
+          designed to create realistic training simulations, helping personnel achieve maximum operational
+          readiness.
+        </p>
+        <a class="link" href={link('/profile/')}><span>About Lockforce</span><Arrow /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Practices -->
+  <section class="section theme-paper practices" id="capabilities">
+    <div class="wrap">
+      <div class="section__head section__head--split">
+        <h2 class="h2" data-split>Operational readiness, across four practices</h2>
+        <p class="lead">Each engagement starts from a risk assessment and is tailored to the client’s requirements.</p>
+      </div>
+      <ul class="practices__list" data-practices>
+        {practices.map((p, i) => (
+          <li>
+            <a class="practice" href={link(p.href)} data-practice={i}>
+              <span class="practice__fill" aria-hidden="true"></span>
+              <span class="practice__name">{p.name}</span>
+              <span class="practice__text">
+                <span class="practice__summary">{p.summary}</span>
+                <span class="practice__items">{p.items.join(', ')}</span>
+              </span>
+              <span class="practice__media">
+                <Image src={img(p.image)} alt="" widths={[400, 800]} sizes="(min-width: 900px) 320px, 100vw" />
+              </span>
+              <span class="practice__go"><Arrow /></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="practices__preview" data-practices-preview aria-hidden="true">
+      {practices.map((p) => (
+        <Image src={img(p.image)} alt="" width={640} />
+      ))}
+    </div>
+  </section>
+
+  <!-- Training support equipment: horizontal run -->
+  <section class="range is-native theme-dark" data-hscroll>
+    <div class="range__pin">
+      <div class="wrap range__head">
+        <h2 class="h2" data-split>Training support equipment for realistic rehearsal</h2>
+        <div class="range__head-side">
+          <p>
+            Simulators, deployable live-fire ranges and ballistic protection used for tactical operations,
+            emergency response and technical skills development.
+          </p>
+          <a class="link" href={link('/products/')}><span>All {products.length} products</span><Arrow /></a>
+        </div>
+      </div>
+      <div class="range__viewport">
+        <ul class="range__track" data-hscroll-track>
+          {featured.map((p) => (
+            <li class="range-card">
+              <a href={link(`/products/#${p.id}`)}>
+                <div class="range-card__media">
+                  <Image src={img(p.image)} alt={p.name} widths={[480, 800]} sizes="(min-width: 900px) 34vw, 80vw" />
+                </div>
+                <div class="range-card__body">
+                  <h3>{p.short ?? p.name}</h3>
+                  {p.short && <p class="range-card__full">{p.name}</p>}
+                  <p>{p.body}</p>
+                </div>
+              </a>
+            </li>
+          ))}
+          <li class="range-card range-card--more">
+            <a href={link('/products/')}>
+              <Reticle />
+              <span>See targetry, props and the full range</span>
+              <Arrow />
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="wrap">
+        <div class="range__progress" aria-hidden="true">
+          <span class="range__progress-line" data-hscroll-line></span>
+          <span class="range__progress-mark" data-hscroll-mark><Reticle /></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Lockforce -->
+  <section class="section theme-concrete why">
+    <div class="wrap why__grid">
+      <div class="why__intro">
+        <h2 class="h2" data-split>Why choose Lockforce</h2>
+        <p class="lead">
+          Established in 2006, with offices in Queensland and Manila, serving mining, oil and gas,
+          construction, shipping and transport.
+        </p>
+        <a class="btn btn--outline" href={link('/profile/')}><span>More about us</span><Arrow /></a>
+      </div>
+      <ul class="why__list" data-lock-list>
+        {whyLockforce.map((w) => (
+          <li class:list={['why-item', { 'why-item--key': w.key }]} data-lock>
+            <Reticle class="why-item__mark" />
+            <div>
+              <h3>{w.title}</h3>
+              <p>{w.body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- News -->
+  <section class="section theme-paper">
+    <div class="wrap">
+      <div class="section__head section__head--split">
+        <h2 class="h2" data-split>News and updates</h2>
+        <a class="link" href={link('/news/')}><span>All news</span><Arrow /></a>
+      </div>
+      <ul class="news-grid" data-reveal-group>
+        {latest.map((n) => (
+          <li>
+            <a class="news-card" href={n.href}>
+              <div class="news-card__media">
+                <Image src={img(n.image)} alt="" widths={[480, 768]} sizes="(min-width: 900px) 30vw, 100vw" />
+              </div>
+              <time datetime={n.date}>{fmtDate(n.date)}</time>
+              <h3>{n.title}</h3>
+              <p>{n.excerpt}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Building resilience through strategic innovations"
+    body="Tell us what you need to protect, prepare for or prove. We will come back with a tailored approach."
+    label="Contact us for more details"
+  />
+</Base>

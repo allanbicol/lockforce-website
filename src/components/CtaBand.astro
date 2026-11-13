@@ -1,0 +1,17 @@
+---
+import { link } from '../lib/url';
+import Reticle from './Reticle.astro';
+import Arrow from './Arrow.astro';
+interface Props { title: string; body?: string; label?: string }
+const { title, body, label = 'Contact us' } = Astro.props;
+---
+<section class="cta" data-cta>
+  <Reticle class="cta__mark" />
+  <div class="wrap cta__inner">
+    <h2 class="h1" data-split>{title}</h2>
+    <div class="cta__side">
+      {body && <p class="lead">{body}</p>}
+      <a class="btn btn--ink" href={link('/contact-us/')}><span>{label}</span><Arrow /></a>
+    </div>
+  </div>
+</section>

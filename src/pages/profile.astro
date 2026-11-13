@@ -1,0 +1,138 @@
+---
+import { link } from '../lib/url';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Reticle from '../components/Reticle.astro';
+import Arrow from '../components/Arrow.astro';
+import { site, whyLockforce } from '../data/site';
+import { img } from '../lib/images';
+const industries = ['Mining', 'Oil and gas', 'Construction', 'Shipping', 'Transportation'];
+---
+<Base
+  title="About Lockforce"
+  description="Lockforce was established in 2006 in Perth and Brisbane, and in the Philippines in 2011. Reliable, professional and accountable security, HSE, risk and training services."
+>
+  <PageHero
+    title="Who we are"
+    lead="Known since 2006 for being reliable and professional, with a high level of accountability."
+    image={img('qms.jpg')}
+    alt="A consultant completing an audit form beside Lockforce quality management booklets"
+  >
+    <a class="btn btn--red" href={link('/contact-us/')}><span>Contact us</span><Arrow /></a>
+  </PageHero>
+
+  <section class="section theme-paper" id="lockforce-profile">
+    <div class="wrap">
+      <ol class="timeline">
+        <li>
+          <strong>2006</strong>
+          <h3>Perth and Brisbane</h3>
+          <p>Lockforce is established in Australia.</p>
+        </li>
+        <li>
+          <strong>2011</strong>
+          <h3>The Philippines</h3>
+          <p>Lockforce opens in Manila, extending its reach through Southeast Asia.</p>
+        </li>
+      </ol>
+
+      <div class="split split--top profile-body">
+        <h2 class="h2" data-split>Specialist skills, delivered with accountability</h2>
+        <div class="prose">
+          <p>
+            Lockforce was established in 2006 in Perth and Brisbane, Australia, and in 2011 in the
+            Philippines. Known for being reliable and professional with a high level of accountability, the
+            company has expanded to provide clients with specialist and experienced skills in strategic
+            <a class="inline-link" href={link('/security-services/')}>security services</a>, HSE services, risk
+            management, business continuity and specialised
+            <a class="inline-link" href={link('/training-services/')}>training services</a>.
+          </p>
+          <p>
+            Continued growth has seen Lockforce enter the commercial sector in Australia and throughout
+            Southeast Asia, with offices in Queensland, Australia, and Manila, Philippines. Thanks to the
+            reputation of our professional staff, we always aim to deliver services that not only meet
+            client expectations but surpass them.
+          </p>
+          <p>
+            Lockforce is a specialised organisation providing services to mining, oil and gas, construction,
+            shipping and transportation companies, nationally and internationally.
+          </p>
+          <ul class="chips chips--inline" aria-label="Industries we serve">
+            {industries.map((i) => <li>{i}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section theme-concrete" id="policy-statement">
+    <div class="wrap">
+      <div class="section__head">
+        <h2 class="h2" data-split>Policy statement</h2>
+      </div>
+      <div class="split split--top">
+        <div class="policy">
+          <article>
+            <h3 class="h3">Our commitment</h3>
+            <div class="prose">
+              <p>
+                Lockforce is committed to fulfilling the criteria set by the International Organisation for
+                Standardisation (ISO) to provide the best safety, security and training services possible.
+                Our personnel stringently comply with legislation, regulations and international standards.
+                The Lockforce methodology for all our services ensures a level of accountability, integrity
+                and professionalism of the highest standard.
+              </p>
+            </div>
+          </article>
+          <article>
+            <h3 class="h3">Continual improvement</h3>
+            <div class="prose">
+              <p>
+                Operating under a program of continuous improvement, Lockforce is committed to compliance
+                with national, international, state and local legislation and regulations. Lockforce is
+                underpinned by regular shareholder and senior management meetings, so business, investments
+                and processes are communicated transparently and conducted efficiently.
+              </p>
+              <p>
+                For more information about Lockforce services, email
+                <a class="inline-link" href={`mailto:${site.email}`}>{site.email}</a>.
+              </p>
+            </div>
+          </article>
+        </div>
+        <div class="split__media split__media--wide" data-clip>
+          <Image
+            src={img('policy.webp')}
+            alt="A professional reviewing a printed policy document"
+            widths={[480, 800, 980]}
+            sizes="(min-width: 960px) 46vw, 100vw"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section theme-paper why">
+    <div class="wrap why__grid">
+      <div class="why__intro">
+        <h2 class="h2" data-split>Why choose Lockforce</h2>
+        <p class="lead">Local company, international expertise, and services tailored to each client.</p>
+      </div>
+      <ul class="why__list">
+        {whyLockforce.map((w) => (
+          <li class:list={['why-item', { 'why-item--key': w.key }]} data-lock>
+            <Reticle class="why-item__mark" />
+            <div>
+              <h3>{w.title}</h3>
+              <p>{w.body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="Building resilience through strategic innovations" label="Contact us for more details" />
+</Base>

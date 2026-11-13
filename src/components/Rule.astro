@@ -1,0 +1,11 @@
+---
+// The red baseline from the Lockforce logo: a line broken by the reticle.
+import Reticle from './Reticle.astro';
+interface Props { at?: number; class?: string }
+const { at = 62, class: cls } = Astro.props;
+---
+<div class:list={['rule', cls]} data-rule style={`--at:${at}%`} aria-hidden="true">
+  <span class="rule__line rule__line--a"></span>
+  <Reticle class="rule__mark" />
+  <span class="rule__line rule__line--b"></span>
+</div>

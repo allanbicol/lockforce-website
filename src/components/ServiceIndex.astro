@@ -1,0 +1,35 @@
+---
+// Long-form services with a sticky index that tracks the reader's position.
+import type { Service } from '../data/site';
+interface Props { title: string; intro?: string; services: Service[] }
+const { title, intro, services } = Astro.props;
+---
+<section class="section theme-paper">
+  <div class="wrap">
+    <div class="section__head">
+      <h2 class="h2" data-split>{title}</h2>
+      {intro && <p class="lead">{intro}</p>}
+    </div>
+    <div class="services" data-spy>
+      <nav class="services__nav" aria-label={title}>
+        <ul>
+          {services.map((s) => (
+            <li><a href={`#${s.id}`} data-spy-link>{s.name}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <div class="services__body">
+        {services.map((s) => (
+          <article class="service" id={s.id} data-spy-target>
+            <h3 class="h3">{s.name}</h3>
+            <div class="prose">
+              {s.paras.map((p) => <p>{p}</p>)}
+              {s.listIntro && <p>{s.listIntro}</p>}
+              {s.list && <ul class="ticks">{s.list.map((li) => <li>{li}</li>)}</ul>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

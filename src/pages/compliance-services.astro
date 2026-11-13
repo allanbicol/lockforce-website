@@ -1,0 +1,122 @@
+---
+import { link } from '../lib/url';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Arrow from '../components/Arrow.astro';
+import { auditServices, maintenanceTasks, bpoServices } from '../data/site';
+import { img } from '../lib/images';
+---
+<Base
+  title="Compliance services"
+  description="ISO audit services, management system maintenance and business process outsourcing from Lockforce. Stay compliant, audit-ready and aligned with ISO standards."
+>
+  <PageHero
+    title="Compliance services"
+    lead="Evaluate, strengthen and continuously improve your management systems in line with internationally recognised ISO standards."
+    image={img('compliance-audit.jpg')}
+    alt="Hands working through a compliance checklist on a laptop"
+  >
+    <a class="btn btn--red" href={link('/contact-us/')}><span>Talk to a compliance specialist</span><Arrow /></a>
+  </PageHero>
+
+  <section class="section theme-paper" id="audit-services">
+    <div class="wrap">
+      <div class="section__head">
+        <h2 class="h2" data-split>Audit services</h2>
+        <p class="lead">
+          We help businesses identify compliance gaps, minimise risk and improve operational efficiency
+          through structured, objective and value-focused assessments.
+        </p>
+      </div>
+      <ul class="trio" data-reveal-group>
+        {auditServices.map((a) => (
+          <li>
+            <h3 class="h3">{a.name}</h3>
+            <p>{a.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section theme-concrete" id="system-maintenance">
+    <div class="wrap">
+      <div class="split split--top">
+        <div class="split__copy">
+          <h2 class="h2" data-split>Management system maintenance</h2>
+          <div class="prose">
+            <p>
+              Outsource the ongoing upkeep of your ISO and document management systems in a cost-effective
+              and efficient way. The service helps businesses of all sizes remain compliant, audit-ready and
+              aligned with ISO standards and regulatory requirements.
+            </p>
+            <p>
+              By proactively overseeing documents, records, training requirements, equipment schedules and
+              audit timelines, we minimise compliance risk and prevent non-conformities, so you can direct
+              your time, resources and budget toward core business operations.
+            </p>
+          </div>
+        </div>
+        <div class="split__media split__media--wide" data-clip>
+          <Image
+            src={img('qms.jpg')}
+            alt="A consultant completing an audit form beside Lockforce quality management booklets"
+            widths={[480, 800, 1024]}
+            sizes="(min-width: 960px) 46vw, 100vw"
+          />
+        </div>
+      </div>
+      <h3 class="h3 block-title">What we look after for you</h3>
+      <ul class="checklist">
+        {maintenanceTasks.map((t) => (
+          <li>
+            <svg viewBox="0 0 22 22" aria-hidden="true"><rect x="1" y="1" width="20" height="20"></rect><path d="M5.5 11.5l3.8 3.8 7.2-8.3"></path></svg>
+            <span>{t}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section theme-paper" id="bpo">
+    <div class="wrap">
+      <div class="split split--top">
+        <div class="split__media split__media--wide" data-clip>
+          <Image
+            src={img('compliance-bpo.jpg')}
+            alt="A Lockforce team member working at a desk with a headset"
+            widths={[480, 800, 1200]}
+            sizes="(min-width: 960px) 46vw, 100vw"
+          />
+        </div>
+        <div class="split__copy">
+          <h2 class="h2" data-split>Business process outsourcing</h2>
+          <div class="prose">
+            <p>
+              Reliable, cost-effective BPO services that help organisations reduce operational costs,
+              improve efficiency and focus on core business functions. We take on time-consuming
+              administrative and support processes with accuracy, compliance and continuity.
+            </p>
+            <p>
+              Clients gain scalable support and expert assistance without the overhead of expanding
+              internal teams.
+            </p>
+          </div>
+        </div>
+      </div>
+      <h3 class="h3 block-title">Our BPO services</h3>
+      <ul class="rows" data-reveal-group>
+        {bpoServices.map((b) => (
+          <li>
+            <h3>{b.name}</h3>
+            <p>{b.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="Ensure compliance with expert support" body="Tell us which standard you are working towards and where your system stands today." />
+</Base>

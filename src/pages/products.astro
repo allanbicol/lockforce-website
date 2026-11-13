@@ -1,0 +1,55 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { products, productGroups } from '../data/site';
+import { img } from '../lib/images';
+const count = (id: string) => products.filter((p) => p.group === id).length;
+---
+<Base
+  title="Products"
+  description="Lockforce Training Support Equipment: MILO, ISE, AROS, Live Fire Range in a Box, Combat Range in a Box, Amidon Ballistic Concrete, targetry and non-ballistic props."
+>
+  <PageHero
+    title="Products"
+    lead="Training Support Equipment for Defence, Police and Government: simulators, deployable live-fire ranges, ballistic protection and targetry that make rehearsal realistic and safe."
+    image={img('ise.jpg')}
+    alt="The Immersive Shooting Environment, a darkened indoor range with a projected scenario"
+  />
+
+  <section class="section theme-paper">
+    <div class="wrap">
+      <div class="filter" data-filter-bar role="group" aria-label="Filter products by type">
+        <button type="button" data-filter="all" aria-pressed="true">All products<span>{products.length}</span></button>
+        {productGroups.map((g) => (
+          <button type="button" data-filter={g.id} aria-pressed="false">{g.name}<span>{count(g.id)}</span></button>
+        ))}
+      </div>
+      <p class="sr-only" role="status" data-filter-status></p>
+
+      <ul class="product-grid" data-filter-grid>
+        {products.map((p) => (
+          <li class="product" id={p.id} data-group={p.group}>
+            <div class="product__media">
+              <Image src={img(p.image)} alt={p.name} widths={[480, 800]} sizes="(min-width: 960px) 30vw, (min-width: 600px) 46vw, 100vw" />
+              {p.short && <span class="product__tag">{p.short}</span>}
+            </div>
+            <h3>{p.name}</h3>
+            <p>{p.body}</p>
+            <div class="product__flyers">
+              {p.flyers.map((f) => (
+                <a class="link" href={f.href} target="_blank" rel="noopener">
+                  <span>{f.label} (PDF)</span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12M6.5 11l5.5 5.5 5.5-5.5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"></path></svg>
+                </a>
+              ))}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand title="Need more information about our products?" body="Ask for specifications, configurations or a demonstration." />
+</Base>

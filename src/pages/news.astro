@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Arrow from '../components/Arrow.astro';
+import { news } from '../data/site';
+import { img } from '../lib/images';
+const fmtDate = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Base title="News and updates" description="News, analysis and updates from Lockforce on crisis preparedness, business continuity, emergency management and operations.">
+  <PageHero
+    title="News and updates"
+    lead="Analysis and updates on crisis preparedness, business continuity, emergency management and our operations."
+  />
+
+  <section class="section theme-paper">
+    <div class="wrap">
+      <ul class="news-grid news-grid--list">
+        {news.map((n, i) => (
+          <li data-reveal>
+            <a class="news-card" href={n.href}>
+              <div class="news-card__media">
+                <Image
+                  src={img(n.image)}
+                  alt=""
+                  widths={[480, 768]}
+                  sizes={i === 0 ? '(min-width: 800px) 56vw, 100vw' : '(min-width: 800px) 46vw, 100vw'}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                />
+              </div>
+              <time datetime={n.date}>{fmtDate(n.date)}</time>
+              <h3>{n.title}</h3>
+              <p>{n.excerpt}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p class="more-row">
+        <a class="link" href="https://lockforce.com.au/news/2/"><span>Older articles</span><Arrow /></a>
+      </p>
+    </div>
+  </section>
+
+  <CtaBand title="Preparing for the unexpected?" body="Talk to us about crisis management, business continuity and emergency planning." />
+</Base>

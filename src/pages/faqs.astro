@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { faqs } from '../data/site';
+---
+<Base title="Frequently asked questions" description="Answers to common questions about Lockforce: why choose us, what we offer, document security, security risk management and occupational health and safety.">
+  <PageHero
+    title="Frequently asked questions"
+    lead="Straight answers about who we are, what we offer and how we work."
+  />
+
+  <section class="section theme-paper">
+    <div class="wrap">
+      <div class="faq">
+        {faqs.map((f, i) => (
+          <div class="faq__item">
+            <h2>
+              <button class="faq__q" type="button" aria-expanded="true" aria-controls={`faq-${i}`} id={`faq-q-${i}`}>
+                <span>{f.q}</span>
+                <span class="faq__icon" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="faq__a" id={`faq-${i}`} role="region" aria-labelledby={`faq-q-${i}`}>
+              <div>
+                <div class="prose">
+                  {f.paras.map((p) => <p>{p}</p>)}
+                  {f.list && <ul class="ticks">{f.list.map((li) => <li>{li}</li>)}</ul>}
+                  {f.after?.map((p) => <p>{p}</p>)}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Still have a question?" body="Send it through and the right person will come back to you." label="Ask us directly" />
+</Base>

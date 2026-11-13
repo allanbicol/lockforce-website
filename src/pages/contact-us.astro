@@ -1,0 +1,77 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Arrow from '../components/Arrow.astro';
+import { site, practices } from '../data/site';
+const tel = (phone: string) => `tel:${phone.replace('(0)', '').replace(/[^+\d]/g, '')}`;
+---
+<Base title="Contact us" description="Get in touch with Lockforce International. Offices in Landsborough, Queensland and Makati City, Philippines.">
+  <PageHero
+    title="Get in touch"
+    lead="Interested in how Lockforce can support your business? Send an enquiry and our team will help."
+  />
+
+  <section class="section theme-paper">
+    <div class="wrap contact">
+      <form class="form" data-enquiry data-to={site.email} novalidate>
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" />
+          <span class="field__error" id="e-name" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-org">Organisation <small>(optional)</small></label>
+          <input id="f-org" name="organisation" type="text" autocomplete="organization" />
+          <span class="field__error"></span>
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required aria-describedby="e-email" />
+          <span class="field__error" id="e-email" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Phone <small>(optional)</small></label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" />
+          <span class="field__error"></span>
+        </div>
+        <div class="field field--full">
+          <label for="f-interest">What can we help with?</label>
+          <select id="f-interest" name="interest">
+            {practices.map((p) => <option>{p.name}</option>)}
+            <option>Something else</option>
+          </select>
+          <span class="field__error"></span>
+        </div>
+        <div class="field field--full">
+          <label for="f-message">Your enquiry</label>
+          <textarea id="f-message" name="message" required aria-describedby="e-message"></textarea>
+          <span class="field__error" id="e-message" aria-live="polite"></span>
+        </div>
+        <div class="form__foot">
+          <button class="btn btn--red" type="submit"><span>Send enquiry</span><Arrow /></button>
+          <p class="form__note">
+            Sending opens your email app with the enquiry addressed to {site.email}, ready for you to send.
+          </p>
+        </div>
+        <p class="form__status" data-form-status tabindex="-1" hidden></p>
+      </form>
+
+      <div class="offices">
+        {site.offices.map((office) => (
+          <address class="office">
+            <h2 class="h3">{office.name}</h2>
+            <p class="office__region">{office.region}</p>
+            <p>{office.lines.map((line) => <>{line}<br /></>)}</p>
+            {office.phones.map((phone) => <p><a href={tel(phone)}>{phone}</a></p>)}
+            <p><a href={`mailto:${site.email}`}>{site.email}</a></p>
+          </address>
+        ))}
+        <div class="office">
+          <h2 class="h3">Follow our work</h2>
+          <p class="office__region">Company updates and news</p>
+          <p><a href={site.linkedin} target="_blank" rel="noopener">Lockforce on LinkedIn</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
